@@ -28,24 +28,42 @@ app = Flask(__name__)
 # ---------------------------------------------------------------- configuration
 # MySQL:   mysql+pymysql://USER:PASSWORD@HOST:3306/portfolio?charset=utf8mb4
 # If DATABASE_URL is not set, a local SQLite file is used so the site runs out of the box.
+
 _default_db = f"sqlite:///{BASE_DIR / 'instance' / 'portfolio.db'}"
 (BASE_DIR / "instance").mkdir(exist_ok=True)
 
+database_url = os.getenv("DATABASE_URL") or _default_db
+
+engine_options = {
+    "pool_pre_ping": True,
+    "pool_recycle": 280,
+}
+
+# Enzonic MySQL requires TLS.
+if database_url.startswith("mysql"):
+    engine_options["connect_args"] = {
+        "ssl": {"ssl": {}}
+    }
+
 app.config.update(
-    SQLALCHEMY_DATABASE_URI=os.getenv("DATABASE_URL") or _default_db,
-    # RDS and MySQL close idle connections; these two keep the pool healthy.
-    SQLALCHEMY_ENGINE_OPTIONS={"pool_pre_ping": True, "pool_recycle": 280},
+    SQLALCHEMY_DATABASE_URI=database_url,
+    SQLALCHEMY_ENGINE_OPTIONS=engine_options,
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
-    MAX_CONTENT_LENGTH=16 * 1024,  # contact form bodies are tiny
-    SEND_FILE_MAX_AGE_DEFAULT=3600,  # browsers may cache CSS/JS/fonts for an hour
+    MAX_CONTENT_LENGTH=16 * 1024,
+    SEND_FILE_MAX_AGE_DEFAULT=3600,
 )
 
-# Behind nginx / a load balancer, trust one hop of X-Forwarded-* headers
-# so the real visitor IP and https scheme are seen.
+# Behind nginx / a load balancer
 if os.getenv("BEHIND_PROXY", "0") == "1":
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+    app.wsgi_app = ProxyFix(
+        app.wsgi_app,
+        x_for=1,
+        x_proto=1,
+        x_host=1
+    )
 
 db = SQLAlchemy(app)
+
 
 # ---------------------------------------------------------------- database model
 
