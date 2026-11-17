@@ -1,0 +1,305 @@
+{% set P = c.PROFILE %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ P.name }} | {{ P.role }}</title>
+  <meta name="description" content="{{ P.site_description }}">
+  <meta name="theme-color" content="#0E2A3B">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ P.name }} | {{ P.role }}">
+  <meta property="og:description" content="{{ P.site_description }}">
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
+  <link rel="preload" href="{{ url_for('static', filename='fonts/bricolage-grotesque-latin-wght-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ url_for('static', filename='fonts/ibm-plex-sans-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap site-header__bar">
+      <a class="brand" href="#top" aria-label="{{ P.name }}, back to top">
+        <span class="brand__mark" aria-hidden="true">SA</span>
+        <span class="brand__name">{{ P.name }}</span>
+      </a>
+
+      <nav class="nav" id="primary-nav" aria-label="Primary">
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#education">Education</a></li>
+          <li><a href="#certifications">Certifications</a></li>
+          <li><a href="#experience">Experience</a></li>
+          {% if c.PROJECTS %}<li><a href="#projects">Projects</a></li>{% endif %}
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="site-header__actions">
+        <button class="icon-btn" type="button" id="theme-toggle" aria-label="Switch between light and dark theme">
+          <svg class="icon icon--sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="icon icon--moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+        <button class="icon-btn nav-toggle" type="button" id="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="progress" aria-hidden="true"><span class="progress__bar" id="progress-bar"></span></div>
+  </header>
+
+  <main id="main">
+    <!-- ============================== HERO ============================== -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="wrap">
+        <h1 class="hero__name" id="hero-title" aria-label="{{ P.name }}">
+          <span class="hero__line" aria-hidden="true">{% for ch in P.first_name %}<span class="ch">{{ ch }}</span>{% endfor %}</span>
+          <span class="hero__line" aria-hidden="true">{% for ch in P.last_name %}<span class="ch">{{ ch }}</span>{% endfor %}</span>
+        </h1>
+
+        <p class="hero__role hero-in">{{ P.role }}</p>
+        <p class="hero__headline hero-in">{{ P.headline }}</p>
+
+        <div class="hero__actions hero-in">
+          <a class="btn btn--primary" href="#contact">Get in touch</a>
+          {% for l in c.LINKS if l.label == 'GitHub' %}
+          <a class="btn btn--ghost" href="{{ l.url }}" target="_blank" rel="noopener noreferrer">GitHub</a>
+          {% endfor %}
+          {% if resume_url %}
+          <a class="btn btn--ghost" href="{{ resume_url }}" download>Download resume</a>
+          {% endif %}
+        </div>
+
+        <figure class="path" aria-label="My stack, from the browser to the cloud">
+          <div class="path__rail">
+            <ol class="path__stops">
+              {% for s in c.STACK_PATH %}
+              <li class="stop hero-in">
+                <span class="stop__node" aria-hidden="true"></span>
+                <span class="stop__layer">{{ s.layer }}</span>
+                <span class="stop__tools">{{ s.tools }}</span>
+              </li>
+              {% endfor %}
+            </ol>
+            <div class="path__track" aria-hidden="true"><span class="path__pulse"></span></div>
+          </div>
+          <figcaption class="path__status" aria-hidden="true">
+            <span>GET /{{ P.first_name | lower }}</span>
+            <span class="path__ok">200 OK</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============================== ABOUT ============================== -->
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="wrap section__grid">
+        <h2 class="section__title" id="about-title" data-draw>About</h2>
+        <div class="section__body">
+          <div class="prose">
+            {% for p in c.ABOUT.paragraphs %}
+            <p{% if loop.first %} class="lead"{% endif %}>{{ p }}</p>
+            {% endfor %}
+          </div>
+          <dl class="facts" data-stagger>
+            {% for label, text in c.ABOUT.facts %}
+            <div class="fact" data-reveal>
+              <dt>{{ label }}</dt>
+              <dd>{{ text }}</dd>
+            </div>
+            {% endfor %}
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== SKILLS ============================== -->
+    <section class="section" id="skills" aria-labelledby="skills-title">
+      <div class="wrap section__grid">
+        <h2 class="section__title" id="skills-title" data-draw>Technical skills</h2>
+        <div class="section__body">
+          <div class="skills" data-stagger>
+            {% for g in c.SKILLS %}
+            <div class="skills__row" data-reveal>
+              <h3 class="skills__group">{{ g.group }}</h3>
+              <ul class="skills__list">
+                {% for item in g["items"] %}<li class="skill">{{ item }}</li>{% endfor %}
+              </ul>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== EDUCATION ============================== -->
+    <section class="section" id="education" aria-labelledby="education-title">
+      <div class="wrap section__grid">
+        <h2 class="section__title" id="education-title" data-draw>Education</h2>
+        <div class="section__body">
+          <ol class="timeline" data-draw data-stagger>
+            {% for e in c.EDUCATION %}
+            <li class="timeline__item{% if e.current %} timeline__item--current{% endif %}" data-reveal>
+              <p class="timeline__years">{{ e.years }}</p>
+              <h3 class="timeline__title">{{ e.title }}</h3>
+              <p class="timeline__school">{{ e.school }}</p>
+              <p class="timeline__score">{{ e.score }}</p>
+            </li>
+            {% endfor %}
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== CERTIFICATIONS ============================== -->
+    <section class="section" id="certifications" aria-labelledby="certifications-title">
+      <div class="wrap section__grid">
+        <h2 class="section__title" id="certifications-title" data-draw>Certifications</h2>
+        <div class="section__body">
+          <div class="cert-groups" data-stagger>
+            {% for g in c.CERTIFICATIONS %}
+            <section class="cert-group" data-reveal>
+              <h3 class="cert-group__issuer">{{ g.issuer }}</h3>
+              {% if g.note %}<p class="cert-group__note">{{ g.note }}</p>{% endif %}
+              <ul class="cert-group__list">
+                {% for it in g["items"] %}
+                <li class="cert">
+                  <span class="cert__name">{{ it.name }}</span>
+                  {% if it.detail %}<span class="cert__detail">{{ it.detail }}</span>{% endif %}
+                </li>
+                {% endfor %}
+              </ul>
+            </section>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== EXPERIENCE ============================== -->
+    <section class="section" id="experience" aria-labelledby="experience-title">
+      <div class="wrap section__grid">
+        <h2 class="section__title" id="experience-title" data-draw>Experience</h2>
+        <div class="section__body">
+          <div class="jobs" data-stagger>
+            {% for j in c.EXPERIENCE %}
+            <article class="job" data-reveal>
+              <div class="job__when">
+                <p class="job__date">{{ j.when }}</p>
+                <p class="job__length">{{ j.length }}</p>
+              </div>
+              <div class="job__main">
+                <h3 class="job__role">{{ j.role }}</h3>
+                <p class="job__org">{{ j.org }}</p>
+                <ul class="job__points">
+                  {% for pt in j.points %}<li>{{ pt }}</li>{% endfor %}
+                </ul>
+                <ul class="tags" aria-label="Tools used">
+                  {% for t in j.tools %}<li>{{ t }}</li>{% endfor %}
+                </ul>
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {% if c.PROJECTS %}
+    <!-- ============================== PROJECTS ============================== -->
+    <section class="section" id="projects" aria-labelledby="projects-title">
+      <div class="wrap section__grid">
+        <h2 class="section__title" id="projects-title" data-draw>Projects</h2>
+        <div class="section__body">
+          <div class="jobs" data-stagger>
+            {% for pr in c.PROJECTS %}
+            <article class="job" data-reveal>
+              <div class="job__when">
+                {% if pr.status %}<p class="job__date">{{ pr.status }}</p>{% endif %}
+              </div>
+              <div class="job__main">
+                <h3 class="job__role">{{ pr.title }}</h3>
+                {% if pr.stack %}<ul class="tags" aria-label="Tech stack">{% for t in pr.stack %}<li>{{ t }}</li>{% endfor %}</ul>{% endif %}
+                <ul class="job__points">
+                  {% for pt in pr.points %}<li>{{ pt }}</li>{% endfor %}
+                </ul>
+                {% if pr.links %}
+                <p class="job__links">
+                  {% for l in pr.links %}<a class="link" href="{{ l.url }}" target="_blank" rel="noopener noreferrer">{{ l.label }}</a>{% endfor %}
+                </p>
+                {% endif %}
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- ============================== CONTACT ============================== -->
+    <section class="section section--last" id="contact" aria-labelledby="contact-title">
+      <div class="wrap section__grid">
+        <h2 class="section__title" id="contact-title" data-draw>Contact</h2>
+        <div class="section__body contact">
+          <div class="contact__info" data-reveal>
+            <p class="lead">{{ P.seeking }}</p>
+            <ul class="contact__list">
+              <li>
+                <span class="contact__label">Email</span>
+                <a class="link" href="mailto:{{ P.email }}">{{ P.email }}</a>
+                <button class="copy" type="button" data-copy="{{ P.email }}">Copy</button>
+              </li>
+              <li>
+                <span class="contact__label">Phone</span>
+                <a class="link" href="tel:{{ P.phone_link }}">{{ P.phone }}</a>
+              </li>
+              {% for l in c.LINKS %}
+              <li>
+                <span class="contact__label">{{ l.label }}</span>
+                <a class="link" href="{{ l.url }}" target="_blank" rel="noopener noreferrer">{{ l.url | replace('https://', '') | replace('www.', '') | trim('/') }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <form class="form" id="contact-form" action="/api/contact" method="post" novalidate data-reveal>
+            <div class="field">
+              <label for="cf-name">Your name</label>
+              <input id="cf-name" name="name" type="text" autocomplete="name" maxlength="80" required aria-describedby="cf-name-err">
+              <p class="field__error" id="cf-name-err" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="cf-email">Your email</label>
+              <input id="cf-email" name="email" type="email" autocomplete="email" maxlength="120" required aria-describedby="cf-email-err">
+              <p class="field__error" id="cf-email-err" role="alert"></p>
+            </div>
+            <div class="field">
+              <label for="cf-message">Message</label>
+              <textarea id="cf-message" name="message" rows="5" maxlength="2000" required aria-describedby="cf-message-err"></textarea>
+              <p class="field__error" id="cf-message-err" role="alert"></p>
+            </div>
+            <div class="hp" aria-hidden="true">
+              <label for="cf-website">Leave this empty</label>
+              <input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+            <button class="btn btn--primary" type="submit" id="cf-submit">Send message</button>
+            <p class="form__status" id="cf-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap site-footer__bar">
+      <p>&copy; {{ year }} {{ P.name }}</p>
+      <p>Built with Flask, MySQL and AWS</p>
+    </div>
+  </footer>
+</body>
+</html>

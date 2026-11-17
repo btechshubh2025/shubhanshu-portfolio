@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Page not found | {{ c.PROFILE.name }}</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</head>
+<body class="plain-page">
+  <main class="wrap plain-page__body">
+    <p class="plain-page__code">404</p>
+    <h1 class="plain-page__title">That page doesn't exist</h1>
+    <p>The link may be old, or the address may have a typo.</p>
+    <p><a class="btn btn--primary" href="/">Go to the portfolio</a></p>
+  </main>
+</body>
+</html>

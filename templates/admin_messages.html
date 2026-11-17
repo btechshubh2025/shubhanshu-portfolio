@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Messages | {{ c.PROFILE.name }}</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</head>
+<body class="plain-page">
+  <main class="wrap inbox">
+    <h1 class="plain-page__title">Messages</h1>
+    {% if messages %}
+    <p class="inbox__count">{{ messages | length }} most recent, newest first. Times are UTC.</p>
+    <ul class="inbox__list">
+      {% for m in messages %}
+      <li class="inbox__item">
+        <p class="inbox__meta">
+          <strong>{{ m.name }}</strong>
+          <a class="link" href="mailto:{{ m.email }}">{{ m.email }}</a>
+          <span>{{ m.created_at.strftime('%d %b %Y, %H:%M') }}</span>
+        </p>
+        <p class="inbox__text">{{ m.message }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No messages yet. They will appear here when someone uses the contact form.</p>
+    {% endif %}
+    <p><a class="link" href="/">Back to the portfolio</a></p>
+  </main>
+</body>
+</html>
